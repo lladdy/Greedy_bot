@@ -84,12 +84,14 @@ class ArmyControl(Micro):
 
                 if self.retreat_unit(attacking_unit, combined_enemies):
                     continue
+
                 if attacking_unit.type_id == ZERGLING:
                     if self.micro_zerglings(targets, attacking_unit):
                         continue
                 else:
                     self.ai.add_action(attacking_unit.attack(targets.closest_to(attacking_unit.position)))
                     continue
+
             elif enemy_building.closer_than(30, attacking_unit.position):
                 self.ai.add_action(attacking_unit.attack(enemy_building.closest_to(attacking_unit.position)))
                 continue
@@ -125,14 +127,19 @@ class ArmyControl(Micro):
             self.ai.townhalls
             and not self.ai.close_enemies_to_base
             and not self.ai.units.structure.closer_than(7, unit.position)
-            and len(combined_enemies.closer_than(15, unit.position))
-            >= len(self.ai.zerglings.closer_than(20, unit.position))
-            + len(self.ai.ultralisks.closer_than(20, unit.position)) * 6
+            and self.is_overwhelmed(unit, combined_enemies)
         ):
             self.move_to_rallying_point(unit)
             self.retreat_units.add(unit.tag)
             return True
         return False
+
+    def is_overwhelmed(self, unit, combined_enemies):
+        return len(combined_enemies.closer_than(15, unit.position)) >= self.army_strength_around(unit)
+
+    def army_strength_around(self, unit):
+        return len(self.ai.zerglings.closer_than(20, unit.position))
+        + len(self.ai.ultralisks.closer_than(20, unit.position)) * 6
 
     def micro_zerglings(self, targets, unit):
         """Target low hp units smartly, and surrounds when attack cd is down"""
