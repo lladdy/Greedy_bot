@@ -1,9 +1,10 @@
 """Everything related to building logic for the pools goes here"""
-from sc2.constants import SPAWNINGPOOL
+from sc2.constants import SPAWNINGPOOL, EXTRACTOR
 
 
 class BuildPool:
     """Ok for now"""
+
     def __init__(self, ai):
         self.ai = ai
 
@@ -13,7 +14,9 @@ class BuildPool:
             not self.ai.already_pending(SPAWNINGPOOL)
             and not self.ai.pools
             and self.ai.can_afford(SPAWNINGPOOL)
-            and (len(self.ai.townhalls) >= 2 or (self.ai.close_enemy_production and self.ai.time < 300))
+            # and self.ai.units(EXTRACTOR)
+            and self.ai.supply_used >= 14
+            # and (len(self.ai.townhalls) >= 2 or (self.ai.close_enemy_production and self.ai.time < 300))
         )
 
     async def handle(self, iteration):

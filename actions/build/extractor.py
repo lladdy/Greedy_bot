@@ -26,7 +26,8 @@ class BuildExtractor:
             if not self.drone:
                 return False
             if not self.ai.already_pending(EXTRACTOR):
-                if not gas and self.ai.pools:
+                # if not gas and self.ai.pools:
+                if not gas and self.ai.supply_used >= 14:
                     self.geyser = geyser
                     return True
             if (self.ai.time > 900 or self.ai.spires) and gas_amount < 11:
